@@ -1,0 +1,16 @@
+Source: knxm-mkusbmath-debian
+Section: Extra
+Priority: extra
+Maintainer: NUmata yacehide <nu+y@math shinshu-u ac jp>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.3
+Homepage: http://math.shinshu-u.ac.jp/~nu/rubbish/knxm-mkusbmath-debian/
+#Vcs-Git: git://git.debian.org/collab-maint/knxm-mkusbmath-debian.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/knxm-mkusbmath-debian.git;a=summary
+
+Package: knxm-mkusbmath-debian
+Architecture: all
+Depends: ${misc:Depends}, parted, bar
+Description: Bash script to help to make a bootable live USB device.
+ This script helps to make a bootable/live system on USB device.
+ This script copies the system from some src and creates persistent volume.

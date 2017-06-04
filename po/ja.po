@@ -1,0 +1,254 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-06-05 18:20+0900\n"
+"PO-Revision-Date: 2014-06-05 08:22+0900\n"
+"Last-Translator: NUmata, yacehice <nu+y [at] math shinshu-u ac jp>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../bin/knxm-mkusbmath-debian:75
+#, sh-format
+msgid ": shell script to make USB bootable system"
+msgstr ": ブート可能なUSBメモリの作成スクリプト."
+
+#: ../bin/knxm-mkusbmath-debian:80
+#, sh-format
+msgid "Input information."
+msgstr "情報の入力."
+
+#: ../bin/knxm-mkusbmath-debian:84
+#, sh-format
+msgid "Confirmation."
+msgstr "確認."
+
+#: ../bin/knxm-mkusbmath-debian:87
+#, sh-format
+msgid ""
+"To make USB bootable system, all files in the USB device will be remove."
+msgstr "システムを構築するにあたり, USBメモリ内のファイルは全て消去されます."
+
+#: ../bin/knxm-mkusbmath-debian:89
+#, sh-format
+msgid "Do you want to make USB bootable system?"
+msgstr "システムの作成をしますか?"
+
+#: ../bin/knxm-mkusbmath-debian:97 ../bin/knxm-mkusbmath-debian:135
+#: ../bin/knxm-mkusbmath-debian:160 ../bin/knxm-mkusbmath-debian:217
+#: ../bin/knxm-mkusbmath-debian:241 ../bin/knxm-mkusbmath-debian:311
+#, sh-format
+msgid "This operation was canceled."
+msgstr "作業は中止されました."
+
+#: ../bin/knxm-mkusbmath-debian:102
+#, sh-format
+msgid "Choose the target devise."
+msgstr "インストール先の選択."
+
+#: ../bin/knxm-mkusbmath-debian:105
+#, sh-format
+msgid "Choose the target (USB) devise to copy the system."
+msgstr "システムを構築する(USB)デバイスを選択してください."
+
+#: ../bin/knxm-mkusbmath-debian:111
+#, sh-format
+msgid "The following %s device(s) may be USB device(s):"
+msgstr "次の %s 個のデバイスはUSBデバイスだと思われます:"
+
+#: ../bin/knxm-mkusbmath-debian:115
+#, sh-format
+msgid "Please input the target device."
+msgstr "対象とするデバイスを選択しください."
+
+#: ../bin/knxm-mkusbmath-debian:115
+#, sh-format
+msgid "(e.g. /dev/sdc)"
+msgstr "(例えば, /dev/sdc の様に入力します.)"
+
+#: ../bin/knxm-mkusbmath-debian:123 ../bin/knxm-mkusbmath-debian:149
+#, sh-format
+msgid "Selected device is %s."
+msgstr "%s が選択されました."
+
+#: ../bin/knxm-mkusbmath-debian:125
+#, sh-format
+msgid "This device may be a system device for your system."
+msgstr "このデバイスはあなたのシステムのシステムデバイスの様に見えます."
+
+#: ../bin/knxm-mkusbmath-debian:126
+#, sh-format
+msgid "Usually, OS is in the device."
+msgstr "通常, OSがここにインストールされいています."
+
+#: ../bin/knxm-mkusbmath-debian:127
+#, sh-format
+msgid "The following operation may destroy your system."
+msgstr "以下の作業によりシステムが壊される可能性があります."
+
+#: ../bin/knxm-mkusbmath-debian:128
+#, sh-format
+msgid "Are you OK to remove all files in the device %s?"
+msgstr "%s にあるファイルを全て消去しても良いですか?"
+
+#: ../bin/knxm-mkusbmath-debian:132 ../bin/knxm-mkusbmath-debian:140
+#: ../bin/knxm-mkusbmath-debian:157 ../bin/knxm-mkusbmath-debian:213
+#, sh-format
+msgid "You have selected %s."
+msgstr "%s が選択されました."
+
+#: ../bin/knxm-mkusbmath-debian:144
+#, sh-format
+msgid "You must select a USB drive name to save."
+msgstr "システムをインストールするUSBデバイスの名前を入力してください."
+
+#: ../bin/knxm-mkusbmath-debian:151
+#, sh-format
+msgid "It may not be a USB drive name."
+msgstr "入力されたものは, USBデバイスの名前ではないかも知れません."
+
+#: ../bin/knxm-mkusbmath-debian:152
+#, sh-format
+msgid "For example, the name should be /dev/sdc not /dev/sdc1."
+msgstr ""
+"例えば, 通常, USBデバイスの名前は /dev/sdc のようなものであり, /dev/sdc1 の様"
+"なものではありません."
+
+#: ../bin/knxm-mkusbmath-debian:153
+#, sh-format
+msgid "Is %s correct?"
+msgstr "%s でよろしいですか?"
+
+#: ../bin/knxm-mkusbmath-debian:169
+#, sh-format
+msgid "%s is not found."
+msgstr "%s は見つかりませんでした."
+
+#: ../bin/knxm-mkusbmath-debian:174
+#, sh-format
+msgid "Choose the source."
+msgstr "コピー元の選択."
+
+#: ../bin/knxm-mkusbmath-debian:177
+#, sh-format
+msgid ""
+"If you boot from a CD/DVD drive and create the copy of the system, then the "
+"source file may be /dev/sr0."
+msgstr ""
+"もしCDやDVDから起動しており, そのシステムをコピーしたいのであれば, コピー元"
+"は /dev/sr0 などになるでしょう."
+
+#: ../bin/knxm-mkusbmath-debian:178
+#, sh-format
+msgid "You may also choose an iso file."
+msgstr "isoファイルを指定しても構いません."
+
+#: ../bin/knxm-mkusbmath-debian:180
+#, sh-format
+msgid "Candidates of the source file:"
+msgstr "コピー元の候補は以下のとおりです:"
+
+#: ../bin/knxm-mkusbmath-debian:202
+#, fuzzy, sh-format
+msgid "You may choose the other file."
+msgstr "上記のリストにないファイルを指定しても構いません."
+
+#: ../bin/knxm-mkusbmath-debian:204
+#, sh-format
+msgid "Select the source file."
+msgstr "コピー元を選択して下さい."
+
+#: ../bin/knxm-mkusbmath-debian:222
+#, fuzzy, sh-format
+msgid "Final confirmation."
+msgstr "最終確認"
+
+#: ../bin/knxm-mkusbmath-debian:225 ../bin/knxm-mkusbmath-debian:303
+#, sh-format
+msgid "It may take over 20 minutes to make."
+msgstr "以下の作業は20分以上かかることがあります."
+
+#: ../bin/knxm-mkusbmath-debian:226 ../bin/knxm-mkusbmath-debian:304
+#, sh-format
+msgid "By the following operation, all files in %s will be **REMOVED**"
+msgstr "この作業により, %s 内のファイルは全て **消去** されます."
+
+#: ../bin/knxm-mkusbmath-debian:229 ../bin/knxm-mkusbmath-debian:306
+#, sh-format
+msgid "Would you start this operation?"
+msgstr "作業を続行しますか?"
+
+#: ../bin/knxm-mkusbmath-debian:235
+#, sh-format
+msgid "Making the system."
+msgstr "システムの作成."
+
+#: ../bin/knxm-mkusbmath-debian:238
+#, sh-format
+msgid "We start creating the system to %s."
+msgstr "システムを %s に構築しています."
+
+#: ../bin/knxm-mkusbmath-debian:251
+#, sh-format
+msgid "Finished."
+msgstr "作業完了."
+
+#: ../bin/knxm-mkusbmath-debian:254
+#, sh-format
+msgid "We have finished making system and persistent volumes."
+msgstr "システムと保存領域が作成されました."
+
+#: ../bin/knxm-mkusbmath-debian:255
+#, sh-format
+msgid "You have got a bootable USB device."
+msgstr "Bootable USBデバイスが完成しました."
+
+#: ../bin/knxm-mkusbmath-debian:323
+#, sh-format
+msgid "Copying the system."
+msgstr "システムのコピー."
+
+#: ../bin/knxm-mkusbmath-debian:326
+#, sh-format
+msgid "We are copying OS image to %s."
+msgstr "システムを %s にコピーしています."
+
+#: ../bin/knxm-mkusbmath-debian:332
+#, sh-format
+msgid "An error occurred during copying the system."
+msgstr "システムの作成中にエラーが発生しました."
+
+#: ../bin/knxm-mkusbmath-debian:335 ../bin/knxm-mkusbmath-debian:353
+#: ../bin/knxm-mkusbmath-debian:370
+#, sh-format
+msgid "Done."
+msgstr "完了."
+
+#: ../bin/knxm-mkusbmath-debian:343
+#, sh-format
+msgid "Making free partitions."
+msgstr "空パーティションの作成."
+
+#: ../bin/knxm-mkusbmath-debian:346
+#, sh-format
+msgid "We are making a new ext4 partition in %s."
+msgstr "%s の空き領域に ext4 フォーマットのパーティションを新規作成しています."
+
+#: ../bin/knxm-mkusbmath-debian:361
+#, sh-format
+msgid "Making persistent volume."
+msgstr "保存領域の作成."
+
+#: ../bin/knxm-mkusbmath-debian:364
+#, sh-format
+msgid "We are making persistent volume."
+msgstr "保存領域を作成しています."

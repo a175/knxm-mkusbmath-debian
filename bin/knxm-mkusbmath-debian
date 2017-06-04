@@ -1,0 +1,377 @@
+#!/usr/bin/env bash
+#License: GPL
+TEXTDOMAIN=knxm-mkusbmath-debian
+. gettext.sh
+
+CMDNAME=$0
+function echoUSAGE(){
+    echo "USAGE: $CMDNAME -cui|$CMDNAME [-f] SOURCE TARGET|$CMDNAME -s[f] SOURCE TARGET | $CMDNAME [-r] TARGET | $CMDNAME -p TARGETPART | $CMDNAME -h" 
+    echo "e.g."
+    echo "  SOURCE: /dev/sr0  mathlibre-debian-amd64-20130403-ja.iso etc " 
+    echo "  TARGET: /dev/sdc" 	
+    echo "  TARGETPART: /dev/sdc2" 
+}
+
+
+
+
+## mkSystemVolume SOURCE TARGET
+##    SOURCE="/dev/sr0"
+##    SOURCE="mathlibre-debian-amd64-20130403-ja.iso"
+##    TAREGET="/dev/sdc"
+function mkSystemVolume(){
+    case $1 in
+	/dev/*) IMGSIZE=`df -h $1 | tail -n 1 | awk '{print $2}' | tr A-Z a-z`;;
+	*.iso) IMGSIZE=`ls -hs $1 |cut -d " " -f 1| tr A-Z a-z`;;
+	*) IMGSIZE=`ls -hs $1 |cut -d " " -f 1| tr A-Z a-z`;;
+    esac
+
+    for P in `df | grep $2 | sed "s/ .*//g"`
+    do
+	umount $P || return 11
+    done
+
+    if  ls $2?* > /dev/null 2>&1 
+    then
+	for PP in $2?*
+	do
+	    parted $2 rm ${PP#$2} 1> /dev/null 2>&1 || return 12
+	done
+    fi
+
+    dd bs=4M if=$1 | bar -s $IMGSIZE > $2 || return 13
+    sync;sync;sync
+}
+
+## minimizeSystemVolume TARGET
+##    TARGET="/dev/sdc"
+function makeFreeVolume(){
+    END=`parted $1 unit s print | grep boot | cut -d 's' -f 2`
+    MIN=`expr $END + 1`
+    parted --align=min $1 unit s mkpart primary ext4 $MIN 100%
+}
+
+
+## mkPersistentVolume TARGETPARTITION
+##    TARGETPARTITION="/dev/sdc2"
+##                    $TARGET\2
+function mkPersistentVolume(){
+    mkfs.ext4 -q $1 -L persistence || return 31
+    TMPMOUNT=`mktemp -d`           || return 32
+    mount $1 $TMPMOUNT             || return 33
+    (echo "/ union" > $TMPMOUNT/live-persistence.conf)  || return 34 
+    sync;sync;sync
+    umount $TMPMOUNT  || return 35
+    sync;sync;sync
+}
+
+
+
+
+####################################################
+## CUI mode
+function cuiSetup(){
+    echo "===================================================================="
+    echo "knxm-mkusbmath-debian" "$(eval_gettext ": shell script to make USB bootable system")"
+    echo "===================================================================="
+    echo
+    echo 
+    echo 
+    echo "I." "$(eval_gettext "Input information.")"
+    echo "--------------------------------------------------------------------"
+    echo
+    echo
+    echo "[1]" "$(eval_gettext "Confirmation.")"
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    echo
+    echo "$(eval_gettext "To make USB bootable system, all files in the USB device will be remove.")"
+    echo 
+    echo "$(eval_gettext "Do you want to make USB bootable system?")" "(y/n)" "[n]"
+    read ANSWER
+    if [ "$ANSWER" = "y"  -o  "$ANSWER" = "yes"  ]; then 
+	FLAG_S="TRUE"; 
+	FLAG_R="TRUE";
+	FLAG_P="TRUE";
+	FLAG_FORCE="TRUE";
+    else
+	echo "$(eval_gettext "This operation was canceled.")"
+	exit 101
+    fi
+    echo
+    echo
+    echo "[2]" "$(eval_gettext "Choose the target devise.")"
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    echo
+    echo "$(eval_gettext "Choose the target (USB) devise to copy the system.")"
+    echo 
+    if [ "$TARGET" = "" ]; then
+	TARGET=`ls -l /dev/disk/by-id | grep usb | awk '{print $11}' | sed -e 's/^..\/..\//\/dev\//g' | grep -E '^/dev/[[:alpha:]]*$' | sort | uniq | tail -n 1`
+    fi
+    NUMOFUSBDEV=`ls -l /dev/disk/by-id | grep usb | awk '{print $11}' | sed -e 's/^..\/..\//\/dev\//g' | grep -E '^/dev/[[:alpha:]]*$' | sort | uniq | wc -l`
+    printf "$(eval_gettext "The following %s device(s) may be USB device(s):")" $NUMOFUSBDEV
+    echo
+    ls -l /dev/disk/by-id | grep usb | awk '{print $11, $9}' | sed -e 's/^..\/..\//\/dev\//g' | grep -E '^/dev/[[:alpha:]]* ' | sort
+    echo
+    echo "$(eval_gettext "Please input the target device.")" "$(eval_gettext "(e.g. /dev/sdc)")" "[$TARGET]"
+    read ANS
+    if [ ! "$ANS" = "" ]; then
+	TARGET=$ANS
+    fi
+    echo
+    case $TARGET in
+	/dev/sda)
+	    printf "$(eval_gettext "Selected device is %s.")" $TARGET
+	    echo
+	    echo "$(eval_gettext "This device may be a system device for your system.")"
+	    echo "$(eval_gettext "Usually, OS is in the device.")"
+	    echo "$(eval_gettext "The following operation may destroy your system.")"
+	    printf "$(eval_gettext "Are you OK to remove all files in the device %s?")" $TARGE
+	    echo "(y/n)" "[n]"
+	    read ANSWER
+	    if [ "$ANSWER" = "y" -o "$ANSWER" = "yes" ]; then 
+		printf "$(eval_gettext "You have selected %s.")" $TARGET
+		echo
+	    else
+		echo "$(eval_gettext "This operation was canceled.")"
+		exit 102
+	    fi
+	    ;;
+	/dev/sd[b-z])
+	    printf "$(eval_gettext "You have selected %s.")" $TARGET
+	    echo
+	    ;;
+	"")
+	    echo "$(eval_gettext "You must select a USB drive name to save.")"
+	    exit 103
+	    ;;
+
+	*)
+	    printf "$(eval_gettext "Selected device is %s.")" $TARGET
+	    echo
+	    echo "$(eval_gettext "It may not be a USB drive name.")"
+	    echo "$(eval_gettext "For example, the name should be /dev/sdc not /dev/sdc1.")"
+	    printf "$(eval_gettext "Is %s correct?")" $ANS
+	    echo "(y/n)" "[n]"
+	    read ANSWER
+	    if [ "$ANSWER" = "y" -o "$ANSWER" = "yes" ]; then 
+		printf "$(eval_gettext "You have selected %s.")" $TARGET
+		echo
+	    else
+		echo "$(eval_gettext "This operation was canceled.")"
+		exit 104
+	    fi
+	    ;;
+    esac	
+    if  ls $TARGET > /dev/null 2>&1 
+    then
+	TARGETPART=$TARGET\2
+    else
+	echo "$(eval_gettext "%s is not found.")" $TARGET 
+	exit 105
+    fi
+    echo 
+    echo
+    echo "[3]" "$(eval_gettext "Choose the source.")"
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    echo
+    echo "$(eval_gettext "If you boot from a CD/DVD drive and create the copy of the system, then the source file may be /dev/sr0.")"
+    echo "$(eval_gettext "You may also choose an iso file.")"
+    echo
+    echo "$(eval_gettext "Candidates of the source file:")"
+    if  ls /dev/sr* > /dev/null 2>&1 
+    then
+	ls /dev/sr* 
+	if [ "$SOURCE" = "" ]; then
+	    SOURCE=`ls /dev/sr*|head -n 1`
+	fi
+    fi
+    if  ls /dev/scd* > /dev/null 2>&1 
+    then
+	ls /dev/scd* 
+	if [ "$SOURCE" = "" ]; then
+	    SOURCE=`ls /dev/scd*|head -n 1`
+	fi
+    fi
+    if  ls *.iso > /dev/null 2>&1 
+    then
+	ls *.iso 
+	if [ "$SOURCE" = "" ]; then
+	    SOURCE=`ls *.iso|tail -n 1`
+	fi
+    fi
+    echo "$(eval_gettext "You may choose the other file.")"
+    echo
+    echo "$(eval_gettext "Select the source file.")" "[$SOURCE]"
+
+    read ANSWER
+    echo
+    if [ ! "$ANSWER" = "" ]; then
+	SOURCE=$ANSWER
+    fi
+    if  ls $ANSWER > /dev/null 2>&1 
+    then
+	printf "$(eval_gettext "You have selected %s.")" $SOURCE
+	echo
+    else
+	echo "$(eval_gettext "$SOURCE is not found.")"
+	echo "$(eval_gettext "This operation was canceled.")"
+	exit 106
+    fi
+    echo
+    echo
+    echo "[4]" "$(eval_gettext "Final confirmation.")"
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    echo
+    echo "$(eval_gettext "It may take over 20 minutes to make.")"
+    printf "$(eval_gettext "By the following operation, all files in %s will be **REMOVED**")" $TARGET
+    echo
+    echo
+    echo "$(eval_gettext "Would you start this operation?")" "(y/n)" "[n]"
+    read ANSWER
+    if [ "$ANSWER" = "y" -o "$ANSWER" = "yes" ]; then 
+	echo
+	echo 
+	echo 
+	echo "II." "$(eval_gettext "Making the system.")"
+	echo "--------------------------------------------------------------------"
+	echo
+	printf "$(eval_gettext "We start creating the system to %s.")" $TARGET
+	echo
+    else
+	echo "$(eval_gettext "This operation was canceled.")"
+	exit 109
+    fi
+}
+
+
+function cuiFininalMessage(){
+    echo 
+    echo
+    echo 
+    echo "III." "$(eval_gettext "Finished.")"
+    echo "--------------------------------------------------------------------"
+    echo
+    echo "$(eval_gettext "We have finished making system and persistent volumes.")"
+    echo "$(eval_gettext "You have got a bootable USB device.")"
+}
+
+
+
+#####################################################################
+## knxm-mkusbmath-debian SOURCE TARGET
+###### = knxm-mkusbmath-debian -s SOURCE TARGET &&
+######   knxm-mkusbmath-debian -r SOURCE TARGET &&
+######   knxm-mkusbmath-debian -p TARGET\2
+## knxm-mkusbmath-debian -s SOURCE TARGET
+## knxm-mkusbmath-debian -r SOURCE TARGET
+## knxm-mkusbmath-debian -p TARGETPART
+##    SOURCE="/dev/sr0"
+##    SOURCE="mathlibre-debian-amd64-20130403-ja.iso"
+##    TAREGET="/dev/sdc"
+##    TAREGETPART="/dev/sdc2"
+
+if [ $# -eq 0 ]; then echoUSAGE >&2; exit 1; fi
+case $1 in
+    -h) echoUSAGE; exit 0 ;;
+    -cui)	
+	FLAG_VERBOSE="TRUE"; FLAG_CUI="TRUE";;
+    -s) if [ $# -ne 3 ]; then echoUSAGE >&2; exit 1; fi
+	FLAG_S="TRUE"; SOURCE=$2; TARGET=$3;;
+    -sf) if [ $# -ne 3 ]; then echoUSAGE >&2; exit 1; fi
+	FLAG_FORCE="TRUE"; FLAG_S="TRUE"; SOURCE=$2; TARGET=$3;;
+    -r) if [ $# -ne 2 ]; then echoUSAGE >&2; exit 1; fi
+	FLAG_R="TRUE";  TARGET=$2;;
+    -p) if [ $# -ne 2 ]; then echoUSAGE >&2; exit 1; fi
+	FLAG_P="TRUE"; TARGETPART=$2;;
+    -*) echoUSAGE >&2; exit 1 ;;
+    -f) if [ $# -ne 3 ]; then echoUSAGE >&2; exit 1; fi
+	FLAG_S="TRUE"; FLAG_R="TRUE"; FLAG_P="TRUE"; 
+	FLAG_FORCE="TRUE"; 
+	SOURCE=$2; TARGET=$3;TARGETPART=$TARGET\2;;
+    *) if [ $# -ne 2 ]; then echoUSAGE >&2; exit 1; fi
+	FLAG_S="TRUE"; FLAG_R="TRUE"; FLAG_P="TRUE"; 
+	SOURCE=$1; TARGET=$2;TARGETPART=$TARGET\2;;
+esac
+
+
+if [ "$FLAG_CUI" = "TRUE" ]; then
+    cuiSetup
+fi
+
+if [ "$FLAG_FORCE" != "TRUE" ]; then
+    if [ "$FLAG_S" = "TRUE" ]; then
+	echo "$(eval_gettext "It may take over 20 minutes to make.")"
+	printf "$(eval_gettext "By the following operation, all files in %s will be **REMOVED**")" $TARGET
+	echo
+	echo "$(eval_gettext "Would you start this operation?")" "(y/n)" "[n]"
+	read ANSWER
+	if [ "$ANSWER" = "y" -o "$ANSWER" = "yes" ]; then 
+	    echo ""
+	else
+	    echo "$(eval_gettext "This operation was canceled.")"
+	    exit 109
+	fi
+    fi
+fi
+
+
+
+if [ "$FLAG_S" = "TRUE" ]; then
+    if [ "$FLAG_VERBOSE" = "TRUE" ]; then
+	echo 
+	echo 
+	echo "$(eval_gettext "Copying the system.")"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo 
+	printf "$(eval_gettext "We are copying OS image to %s.")" $TARGET
+	echo
+	echo 
+    fi
+
+    mkSystemVolume $SOURCE $TARGET || \
+	{ echo "$(eval_gettext "An error occurred during copying the system.")" >&2; exit 10; }
+    if [ "$FLAG_VERBOSE" = "TRUE" ]; then
+	echo 
+	echo "$(eval_gettext "Done.")"
+    fi
+fi 
+
+if [ "$FLAG_R" = "TRUE" ]; then
+    if [ "$FLAG_VERBOSE" = "TRUE" ]; then
+	echo 
+	echo 
+	echo "$(eval_gettext "Making free partitions.")"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo
+	printf "$(eval_gettext "We are making a new ext4 partition in %s.")" $TARGET
+	echo
+    fi
+    makeFreeVolume $TARGET || \
+	{ echo "An error occurred during making a new partition." >&2; exit 20; }
+    if [ "$FLAG_VERBOSE" = "TRUE" ]; then
+	echo
+	echo "$(eval_gettext "Done.")"
+    fi
+fi
+
+if [ "$FLAG_P" = "TRUE" ]; then
+    if [ "$FLAG_VERBOSE" = "TRUE" ]; then
+	echo 
+	echo 
+	echo "$(eval_gettext "Making persistent volume.")"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo 
+	echo "$(eval_gettext "We are making persistent volume.")" $TARGETPART
+    fi
+    mkPersistentVolume $TARGETPART || \
+	{ echo "An error occured during making persistent volume." >&2; exit 30; }
+    if [ "$FLAG_VERBOSE" = "TRUE" ]; then
+	echo 
+	echo "$(eval_gettext "Done.")"
+    fi
+fi
+
+
+if [ "$FLAG_CUI" = "TRUE" ]; then
+    cuiFininalMessage
+fi

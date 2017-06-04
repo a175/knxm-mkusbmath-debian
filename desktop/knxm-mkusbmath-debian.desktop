@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=make a bootable usb
+Name[ja]=ブータブルUSBの作成
+Comment=This script helps to create a bootable usb.
+Comment[ja]=ブータブルUSBを作成します.
+Exec=gnome-terminal -e "sh -c 'sudo -E knxm-mkusbmath-debian -cui;echo;echo [enter];read a'" 
+Icon=preferences-system
+Terminal=true
+Type=Application
+Categories=Settings;HardwareSettings;

@@ -1,0 +1,93 @@
+.TH knxm-mkusbmath-debian 1 
+
+.SH NAME
+knxm-mkusbmath-debian \- a bash script to help to make a bootable usb system.
+
+.SH SYNOPSIS
+.\" usage
+.B knxm-mkusbmath-debian -cui
+
+.B knxm-mkusbmath-debian [-f] 
+.I SOURCE 
+.I TARGET
+
+.B knxm-mkusbmath-debian -s[f]
+.I SOURCE
+.I TARGET
+
+.B knxm-mkusbmath-debian -r
+.I TARGET
+
+.B knxm-mkusbmath-debian -p
+.I TARGETPARTITION
+
+.B knxm-mkusbmath-debian -h
+
+
+
+.SH DESCRIPTION
+.I knxm-mkusbmath-debian
+is a small bash script to help to make a bootable usb device. 
+
+.SH OPTIONS
+Here is a summary of all the options.
+.TP
+.BI -cui
+Run as a cui mode.
+
+.TP
+.BI [-f]\ SOURCE\ TARGET
+Copy the system from 
+.I SOURCE
+to 
+.I TARGET
+creat a bootable usb system to the first partition of TARGET,
+and create persitent volume to the second partition.  
+All files in TARGET will be 
+.B removed.
+.I SOURCE
+should be an iso file, e.g.,  mathlibre-debian-amd64-20130403-ja.iso,
+or a DVD/CD device, e.g., /dev/sr0.
+.I TARGET
+should be a device, e.g., /dev/sdc.
+The option 
+.I -f 
+means so-called force mode, i.e., the mode without any confirmations.
+
+.TP
+.BI -s[f]\ SOURCE\ TARGET
+Copy the system from 
+.I SOURCE
+to 
+.I TARGET
+creat a bootable usb system to TARGET.  All files in TARGET will be 
+.B removed.
+.I SOURCE
+should be an iso file, e.g.,  mathlibre-debian-amd64-20130403-ja.iso,
+or a DVD/CD device, e.g., /dev/sr0.
+.I TARGET
+should be a device, e.g., /dev/sdc.
+The option 
+.B f
+means so-called force mode.
+
+.TP
+.BI -r\ TARGET
+Create a partition of ext4 to the free space of the device TARGET.
+.I TARGET
+should be a device, e.g., /dev/sdc.
+
+.TP
+.BI -p\ TARGETPARTITION
+Make TARGETPARTITION a persistent volume.
+.I TARGETPARTITION
+sould be a partition, e.g., /dev/sdc2.
+
+.TP
+.BI -h
+Print helps.
+
+
+.SH AUTHORS
+NUMATA, Yacehide (nu+y at math sci hokudai ac jp)
+

@@ -1,0 +1,12 @@
+Package: knxm-mkusbmath-debian
+Version: 0.0.1-1
+Architecture: all
+Maintainer: NUmata yacehide <nu+y@math shinshu-u ac jp>
+Installed-Size: 71
+Depends: parted, bar
+Section: Extra
+Priority: extra
+Homepage: http://math.shinshu-u.ac.jp/~nu/rubbish/knxm-mkusbmath-debian/
+Description: Bash script to help to make a bootable live USB device.
+ This script helps to make a bootable/live system on USB device.
+ This script copies the system from some src and creates persistent volume.
