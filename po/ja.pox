@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-05 18:20+0900\n"
+"POT-Creation-Date: 2016-02-25 13:59+0900\n"
 "PO-Revision-Date: 2014-06-05 08:22+0900\n"
 "Last-Translator: NUmata, yacehice <nu+y [at] math shinshu-u ac jp>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -222,33 +222,39 @@ msgstr "システムのコピー."
 msgid "We are copying OS image to %s."
 msgstr "システムを %s にコピーしています."
 
-#: ../bin/knxm-mkusbmath-debian:332
+#: ../bin/knxm-mkusbmath-debian:328 ../bin/knxm-mkusbmath-debian:351
+#: ../bin/knxm-mkusbmath-debian:372
+#, sh-format
+msgid "This step is %s / %s."
+msgstr "これは %s / %s 番目の作業です."
+
+#: ../bin/knxm-mkusbmath-debian:335
 #, sh-format
 msgid "An error occurred during copying the system."
 msgstr "システムの作成中にエラーが発生しました."
 
-#: ../bin/knxm-mkusbmath-debian:335 ../bin/knxm-mkusbmath-debian:353
-#: ../bin/knxm-mkusbmath-debian:370
+#: ../bin/knxm-mkusbmath-debian:338 ../bin/knxm-mkusbmath-debian:359
+#: ../bin/knxm-mkusbmath-debian:380
 #, sh-format
 msgid "Done."
 msgstr "完了."
 
-#: ../bin/knxm-mkusbmath-debian:343
+#: ../bin/knxm-mkusbmath-debian:346
 #, sh-format
 msgid "Making free partitions."
 msgstr "空パーティションの作成."
 
-#: ../bin/knxm-mkusbmath-debian:346
+#: ../bin/knxm-mkusbmath-debian:349
 #, sh-format
 msgid "We are making a new ext4 partition in %s."
 msgstr "%s の空き領域に ext4 フォーマットのパーティションを新規作成しています."
 
-#: ../bin/knxm-mkusbmath-debian:361
+#: ../bin/knxm-mkusbmath-debian:367
 #, sh-format
 msgid "Making persistent volume."
 msgstr "保存領域の作成."
 
-#: ../bin/knxm-mkusbmath-debian:364
+#: ../bin/knxm-mkusbmath-debian:370
 #, sh-format
 msgid "We are making persistent volume."
 msgstr "保存領域を作成しています."

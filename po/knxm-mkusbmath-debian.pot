@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-05 18:20+0900\n"
+"POT-Creation-Date: 2016-02-25 13:59+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -218,33 +218,39 @@ msgstr ""
 msgid "We are copying OS image to %s."
 msgstr ""
 
-#: ../bin/knxm-mkusbmath-debian:332
+#: ../bin/knxm-mkusbmath-debian:328 ../bin/knxm-mkusbmath-debian:351
+#: ../bin/knxm-mkusbmath-debian:372
+#, sh-format
+msgid "This step is %s / %s."
+msgstr ""
+
+#: ../bin/knxm-mkusbmath-debian:335
 #, sh-format
 msgid "An error occurred during copying the system."
 msgstr ""
 
-#: ../bin/knxm-mkusbmath-debian:335 ../bin/knxm-mkusbmath-debian:353
-#: ../bin/knxm-mkusbmath-debian:370
+#: ../bin/knxm-mkusbmath-debian:338 ../bin/knxm-mkusbmath-debian:359
+#: ../bin/knxm-mkusbmath-debian:380
 #, sh-format
 msgid "Done."
 msgstr ""
 
-#: ../bin/knxm-mkusbmath-debian:343
+#: ../bin/knxm-mkusbmath-debian:346
 #, sh-format
 msgid "Making free partitions."
 msgstr ""
 
-#: ../bin/knxm-mkusbmath-debian:346
+#: ../bin/knxm-mkusbmath-debian:349
 #, sh-format
 msgid "We are making a new ext4 partition in %s."
 msgstr ""
 
-#: ../bin/knxm-mkusbmath-debian:361
+#: ../bin/knxm-mkusbmath-debian:367
 #, sh-format
 msgid "Making persistent volume."
 msgstr ""
 
-#: ../bin/knxm-mkusbmath-debian:364
+#: ../bin/knxm-mkusbmath-debian:370
 #, sh-format
 msgid "We are making persistent volume."
 msgstr ""

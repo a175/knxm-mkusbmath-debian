@@ -12,7 +12,7 @@ function echoUSAGE(){
     echo "  TARGETPART: /dev/sdc2" 
 }
 
-
+persistence_list=persistence.conf
 
 
 ## mkSystemVolume SOURCE TARGET
@@ -59,7 +59,7 @@ function mkPersistentVolume(){
     mkfs.ext4 -q $1 -L persistence || return 31
     TMPMOUNT=`mktemp -d`           || return 32
     mount $1 $TMPMOUNT             || return 33
-    (echo "/ union" > $TMPMOUNT/live-persistence.conf)  || return 34 
+    (echo "/ union" > $TMPMOUNT/$persistence_list)  || return 34 
     sync;sync;sync
     umount $TMPMOUNT  || return 35
     sync;sync;sync
@@ -125,7 +125,7 @@ function cuiSetup(){
 	    echo "$(eval_gettext "This device may be a system device for your system.")"
 	    echo "$(eval_gettext "Usually, OS is in the device.")"
 	    echo "$(eval_gettext "The following operation may destroy your system.")"
-	    printf "$(eval_gettext "Are you OK to remove all files in the device %s?")" $TARGE
+	    printf "$(eval_gettext "Are you OK to remove all files in the device %s?")" $TARGET
 	    echo "(y/n)" "[n]"
 	    read ANSWER
 	    if [ "$ANSWER" = "y" -o "$ANSWER" = "yes" ]; then 
@@ -274,23 +274,23 @@ if [ $# -eq 0 ]; then echoUSAGE >&2; exit 1; fi
 case $1 in
     -h) echoUSAGE; exit 0 ;;
     -cui)	
-	FLAG_VERBOSE="TRUE"; FLAG_CUI="TRUE";;
+	FLAG_VERBOSE="TRUE"; FLAG_CUI="TRUE"; NUM_OF_TOTAL_OPERATION=3;;
     -s) if [ $# -ne 3 ]; then echoUSAGE >&2; exit 1; fi
-	FLAG_S="TRUE"; SOURCE=$2; TARGET=$3;;
+	FLAG_S="TRUE"; SOURCE=$2; TARGET=$3; NUM_OF_TOTAL_OPERATION=1;;
     -sf) if [ $# -ne 3 ]; then echoUSAGE >&2; exit 1; fi
-	FLAG_FORCE="TRUE"; FLAG_S="TRUE"; SOURCE=$2; TARGET=$3;;
+	FLAG_FORCE="TRUE"; FLAG_S="TRUE"; SOURCE=$2; TARGET=$3; NUM_OF_TOTAL_OPERATION=1;;
     -r) if [ $# -ne 2 ]; then echoUSAGE >&2; exit 1; fi
-	FLAG_R="TRUE";  TARGET=$2;;
+	FLAG_R="TRUE";  TARGET=$2; NUM_OF_TOTAL_OPERATION=1;;
     -p) if [ $# -ne 2 ]; then echoUSAGE >&2; exit 1; fi
-	FLAG_P="TRUE"; TARGETPART=$2;;
+	FLAG_P="TRUE"; TARGETPART=$2; NUM_OF_TOTAL_OPERATION=1;;
     -*) echoUSAGE >&2; exit 1 ;;
     -f) if [ $# -ne 3 ]; then echoUSAGE >&2; exit 1; fi
 	FLAG_S="TRUE"; FLAG_R="TRUE"; FLAG_P="TRUE"; 
 	FLAG_FORCE="TRUE"; 
-	SOURCE=$2; TARGET=$3;TARGETPART=$TARGET\2;;
+	SOURCE=$2; TARGET=$3;TARGETPART=$TARGET\2; NUM_OF_TOTAL_OPERATION=3;;
     *) if [ $# -ne 2 ]; then echoUSAGE >&2; exit 1; fi
 	FLAG_S="TRUE"; FLAG_R="TRUE"; FLAG_P="TRUE"; 
-	SOURCE=$1; TARGET=$2;TARGETPART=$TARGET\2;;
+	SOURCE=$1; TARGET=$2;TARGETPART=$TARGET\2; NUM_OF_TOTAL_OPERATION=3;;
 esac
 
 
@@ -315,7 +315,7 @@ if [ "$FLAG_FORCE" != "TRUE" ]; then
 fi
 
 
-
+NUM_OF_OPERATION=1
 if [ "$FLAG_S" = "TRUE" ]; then
     if [ "$FLAG_VERBOSE" = "TRUE" ]; then
 	echo 
@@ -324,6 +324,9 @@ if [ "$FLAG_S" = "TRUE" ]; then
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo 
 	printf "$(eval_gettext "We are copying OS image to %s.")" $TARGET
+	echo
+	printf "$(eval_gettext "This step is %s / %s.")" $NUM_OF_OPERATION  $NUM_OF_TOTAL_OPERATION
+	NUM_OF_OPERATION=`expr $NUM_OF_OPERATION + 1`
 	echo
 	echo 
     fi
@@ -345,6 +348,9 @@ if [ "$FLAG_R" = "TRUE" ]; then
 	echo
 	printf "$(eval_gettext "We are making a new ext4 partition in %s.")" $TARGET
 	echo
+	printf "$(eval_gettext "This step is %s / %s.")" $NUM_OF_OPERATION  $NUM_OF_TOTAL_OPERATION
+	NUM_OF_OPERATION=`expr $NUM_OF_OPERATION + 1`
+	echo
     fi
     makeFreeVolume $TARGET || \
 	{ echo "An error occurred during making a new partition." >&2; exit 20; }
@@ -362,6 +368,10 @@ if [ "$FLAG_P" = "TRUE" ]; then
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo 
 	echo "$(eval_gettext "We are making persistent volume.")" $TARGETPART
+	echo
+	printf "$(eval_gettext "This step is %s / %s.")" $NUM_OF_OPERATION  $NUM_OF_TOTAL_OPERATION
+	NUM_OF_OPERATION=`expr $NUM_OF_OPERATION + 1`
+	echo
     fi
     mkPersistentVolume $TARGETPART || \
 	{ echo "An error occured during making persistent volume." >&2; exit 30; }
