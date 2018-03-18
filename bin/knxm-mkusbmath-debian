@@ -35,22 +35,41 @@ function mkSystemVolume(){
     then
 	for PP in $2?*
 	do
-	    parted $2 rm ${PP#$2} 1> /dev/null 2>&1 || return 12
+	    parted $2 -s rm ${PP#$2} 1> /dev/null 2>&1 || return 12
 	done
     fi
-
-    dd bs=4M if=$1 | bar -s $IMGSIZE > $2 || return 13
+    #BS=$(parted -s $1 unit s print |grep "Sector size"|sed 's/.*\///'|sed 's/B//')
+    BS=4M
+    dd bs=$BS if=$1 | bar -s $IMGSIZE > $2 || return 13
     sync;sync;sync
 }
 
-## minimizeSystemVolume TARGET
+## makeFreeVolume TARGET
 ##    TARGET="/dev/sdc"
 function makeFreeVolume(){
-    END=`parted $1 unit s print | grep boot | cut -d 's' -f 2`
-    MIN=`expr $END + 1`
-    parted --align=min $1 unit s mkpart primary ext4 $MIN 100%
+    if parted -s $1 unit s print | grep "Partition Table: gpt"
+    then
+	makeFreeVolumeGPT $1
+    else
+	makeFreeVolumeMBR $1
+    fi
 }
 
+## makeFreeVolumeMBR TARGET
+##    TARGET="/dev/sdc"
+function makeFreeVolumeMBR(){
+    END=$(parted -s $1 unit s print | grep boot | cut -d 's' -f 2)
+    MIN=`expr $END + 1`
+    parted --align=min -s $1 unit s mkpart primary ext4 $MIN 100%
+}
+
+## makeFreeVolumeGPT TARGET
+##    TARGET="/dev/sdc"
+function makeFreeVolumeGPT(){
+    END=$(parted -s $1 unit s print | grep boot | cut -d 's' -f 2)
+    MIN=`expr $END + 1`
+    parted --align=min -s $1 unit s mkpart primary ext4 $MIN 100%
+}
 
 ## mkPersistentVolume TARGETPARTITION
 ##    TARGETPARTITION="/dev/sdc2"
